@@ -16,26 +16,6 @@ const HeaderSection = ({ onlineUser, roleUser }) => {
               </div>
               <div className="hidden w-full md:block md:w-auto" id="navbar-default">
                 <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0  dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                  <li className="flex flex-col justify-center">
-                    <div className="block text-white rounded  text-white mx-3" aria-current="page">
-                      Home
-                    </div>
-                  </li>
-                  <li className="flex flex-col justify-center">
-                    <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
-                      About
-                    </div>
-                  </li>
-                  <li className="flex flex-col justify-center">
-                    <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
-                      Services
-                    </div>
-                  </li>
-                  <li className="flex flex-col justify-center">
-                    <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
-                      Contact
-                    </div>
-                  </li>
                   <li>
                     {onlineUser?.fullName && (
                       <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
