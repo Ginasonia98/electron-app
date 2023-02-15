@@ -2,6 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { initializeApp } from 'firebase/app';
 import { getFirestore, query, getDocs, collection, where, addDoc } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -22,6 +23,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 const getUserByUid = async (uid) => {
   const q = query(collection(database, 'accounts'), where('uid', '==', uid));
@@ -76,4 +78,5 @@ export {
   registerWithEmailAndPassword,
   getUserByUid,
   logout,
+  storage,
 };

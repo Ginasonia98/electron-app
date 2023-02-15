@@ -1,15 +1,35 @@
+/* eslint-disable no-shadow */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/no-array-index-key */
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getUserByUid } from 'src/hooks/firebase-config';
 import Footer from 'src/components/Footer/Footer';
 import Card from 'src/components/Card/Card';
+import Card2 from 'src/components/Card/Card2';
+import HeaderSection from 'src/components/Header';
+import useFirestore from 'src/hooks/useFirestore';
+// import axios from 'axios';
+
+const fileType = ['image/svg', 'image/gif', 'image/jpeg', 'image/jpg', 'image/png'];
 
 const Home = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const {
+    postFileFirebaseStorage,
+    uploadedUrl,
+    getFirestoreData,
+    downloadFile,
+    blobFile,
+    setBlobFile,
+    deleteFile,
+  } = useFirestore();
+  const [fileUsers, setFileUsers] = useState([]);
+  const [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState('');
   const [onlineUser, setOnlineUser] = useState(null);
   const [roleUser, setRoleUser] = useState(null);
-  const getUserBuId = useCallback(async () => {
+  const getUserById = useCallback(async () => {
     if (id) {
       const userData = await getUserByUid(id);
       setOnlineUser(userData);
@@ -20,95 +40,104 @@ const Home = () => {
   //   navigate('/about');
   // };
 
-  const goToRegister = () => {
-    navigate('/');
+  const handleChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    if (!fileType.includes(file.type)) {
+      return;
+    }
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewImage(objectUrl);
+    setImage(e.target.files[0]);
   };
 
-  useEffect(() => {
-    getUserBuId();
+  const handleUploadImage = useCallback(async () => {
+    await postFileFirebaseStorage(image, id, 'images');
+  }, [image, id]);
+
+  const getImages = useCallback(async () => {
+    const images = await getFirestoreData('images', id);
+    setFileUsers(images.images);
   }, [id]);
 
+  const removeImage = useCallback(
+    async (url) => {
+      const response = await deleteFile(url, id);
+      if (response === 'deleted') {
+        getImages();
+      }
+    },
+    [id],
+  );
+
+  const downloadImage = useCallback(async (url) => {
+    await downloadFile(url);
+  }, []);
+
+  const extractFile = useCallback(async (blobFile) => {
+    const blobUrl = URL.createObjectURL(blobFile);
+    // Create a link element
+    const link = document.createElement('a');
+    // Set link's href to point to the Blob URL
+    link.href = blobUrl;
+    link.download = 'file';
+    // Append link to the body
+    document.body.appendChild(link);
+    // Dispatch click event on the link
+    // This is necessary as link.click() does not work on the latest firefox
+    link.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      }),
+    );
+    // Remove link from body
+    document.body.removeChild(link);
+    setBlobFile(null);
+  }, []);
+
+  useEffect(() => {
+    if (blobFile) {
+      extractFile(blobFile);
+    }
+  }, [blobFile]);
+
+  useEffect(() => {
+    if (id) {
+      getUserById();
+      getImages();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (uploadedUrl) {
+      setImage(null);
+      setPreviewImage('');
+      getImages();
+    }
+  }, [uploadedUrl]);
+
   return (
-    <div className="container">
-      <div className=" bg-fuchsia-500  flex items-center  h-24">
-        <nav className="border-gray-200 px-2 sm:px-4 py-2.5 rounded ">
-          <div className="flex flex-wrap items-center justify-between mx-auto">
-            <div className="flex items-center">
-              <img
-                src="https://png.pngtree.com/png-vector/20190925/ourmid/pngtree-lovely-yellow-star-clipart-png-vector-element-png-image_1739225.jpg"
-                className="h-6 mr-3 sm:h-9"
-                alt="Star Logo "
-              />
-              <span className="self-center text-xl font-semibold whitespace-nowrap text-white">
-                Star
-              </span>
+    <div>
+      <HeaderSection onlineUser={onlineUser} roleUser={roleUser} />
+      <Card
+        handleChange={handleChange}
+        image={image}
+        previewImage={previewImage}
+        handleUploadImage={handleUploadImage}
+      />
+      <div className="container mx-auto px-10 my-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {fileUsers.map((item, index) => {
+          return (
+            <div key={`images-${index}`}>
+              <Card2 image={item} downloadImage={downloadImage} removeImage={removeImage} />
             </div>
-            <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-              <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0  dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                <li>
-                  <div className="block text-white rounded  text-white mx-3" aria-current="page">
-                    Home
-                  </div>
-                </li>
-                <li>
-                  <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
-                    About
-                  </div>
-                </li>
-                <li>
-                  <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
-                    Services
-                  </div>
-                </li>
-                <li>
-                  <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white ">
-                    Contact
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-        <div>
-          {onlineUser?.fullName && (
-            <>
-              <div className="text-2xl text-white bg-pink-500 shadow-lg shadow-indigo-500/50 h-10 mx-28">
-                {onlineUser?.fullName ?? 'none'}
-              </div>
-              {/* <button
-            type="button"
-            onClick={goToAbout}
-            className="bg-blue-500 px-4 text-white ml-4 rounded-full">
-            About
-          </button> */}
-            </>
-          )}
-          {!onlineUser?.fullName && (
-            <button
-              type="button"
-              onClick={goToRegister}
-              className="bg-blue-500 px-4 text-white ml-4 rounded-full">
-              Register
-            </button>
-          )}
-        </div>
-        <div>
-          {roleUser?.role && (
-            <>
-              <div className="text-2xl text-white bg-pink-500 shadow-lg shadow-indigo-500/50 h-10 ">
-                {roleUser?.role ?? 'none'}
-              </div>
-              {/* <button
-            type="button"
-            onClick={goToAbout}
-            className="bg-blue-500 px-4 text-white ml-4 rounded-full">
-            About
-          </button> */}
-            </>
-          )}
-        </div>
+          );
+        })}
       </div>
-      <Card/>
       <Footer />
     </div>
   );
