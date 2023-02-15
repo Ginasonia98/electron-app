@@ -1,7 +1,12 @@
 /* eslint-disable react/prop-types */
 import star from 'src/assets/star.png';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderSection = ({ onlineUser, roleUser }) => {
+  const navigate = useNavigate();
+  const handleGoToRegister = () => {
+    navigate('/');
+  };
   return (
     <div className="sticky top-2 mt-2 px-2">
       <div className="bg-fuchsia-500 px-2 h-24 flex items-center rounded-md ">
@@ -37,6 +42,16 @@ const HeaderSection = ({ onlineUser, roleUser }) => {
                         </button>
                       </div>
                     )}
+                  </li>
+                  <li>
+                    <div className="block py-2 pl-3 pr-4 text-white rounded md:border-0  md:p-0  md:dark:hover:text-white  dark:hover:text-white  ">
+                      <button
+                        type="button"
+                        onClick={handleGoToRegister}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Logout
+                      </button>
+                    </div>
                   </li>
                 </ul>
               </div>

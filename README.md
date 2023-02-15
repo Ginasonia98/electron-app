@@ -1,6 +1,6 @@
 Application Electron & Reactjs
 
-Instal :
+Installation :
 1.Instal Electron
 2. Instal Firebase
 3. Instal React Router Dom
