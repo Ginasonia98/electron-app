@@ -12,8 +12,14 @@ const DownloadCard = ({ image, downloadImage, removeImage }) => {
 
   return (
     <div className="rounded-md overflow-hidden shadow-lg hover:shadow-2xl">
-      <div className="w-full max-h-48 h-48 overflow-y-hidden">
-        {image && <img className="h-48 w-full object-cover" src={image} alt="view" />}
+      <div className="w-full max-h-48 h-48 overflow-hidden">
+        {image && (
+          <img
+            className="h-48 w-full object-cover transform transition duration-500 hover:scale-150"
+            src={image}
+            alt="view"
+          />
+        )}
       </div>
       <div className="flex">
         <div

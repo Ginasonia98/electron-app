@@ -10,21 +10,27 @@ require('@electron/remote/main').initialize();
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
+    autoHideMenuBar: true,
     width: 800,
-    height: 600,
+    minWidth: 800,
+    maxWidth: 800,
+    height: 800,
+    minHeight: 800,
+    maxHeight: 800,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: false,
     },
   });
+  win.removeMenu();
   require('@electron/remote/main').enable(win.webContents);
 
   win.loadURL(
     isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`,
   );
   // unable the code below to show the inspect element
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 }
 
 app.on('ready', createWindow);

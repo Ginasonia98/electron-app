@@ -36,9 +36,6 @@ const Home = () => {
       setRoleUser(userData);
     }
   }, [id]);
-  // const goToAbout = () => {
-  //   navigate('/about');
-  // };
 
   const handleChange = (e) => {
     const file = e.target.files[0];
@@ -59,7 +56,7 @@ const Home = () => {
 
   const getImages = useCallback(async () => {
     const images = await getFirestoreData('images', id);
-    setFileUsers(images.images);
+    setFileUsers(images.images?.reverse());
   }, [id]);
 
   const removeImage = useCallback(
@@ -116,8 +113,8 @@ const Home = () => {
     if (uploadedUrl) {
       setImage(null);
       setPreviewImage('');
-      getImages();
     }
+    getImages();
   }, [uploadedUrl]);
 
   return (
@@ -129,7 +126,8 @@ const Home = () => {
         previewImage={previewImage}
         handleUploadImage={handleUploadImage}
       />
-      <div className="container mx-auto px-10 my-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="container mx-auto px-1 text-2xl font-bold">Daftar Gambarmu</div>
+      <div className="container mx-auto px-1 my-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {fileUsers.map((item, index) => {
           return (
             <div key={`images-${index}`}>

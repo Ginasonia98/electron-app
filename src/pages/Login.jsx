@@ -2,7 +2,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { logInWithEmailAndPassword } from 'src/hooks/firebase-config';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const Login = () => {
   });
 
   const handleGoToRegister = () => {
-    navigate('/register');
+    navigate('/');
   };
 
   const updateFields = (key, value) => {
@@ -29,10 +29,6 @@ const Login = () => {
     if (response?.user?.uid) {
       navigate(`/home/${response?.user?.uid}`);
     }
-  }, [user]);
-
-  useEffect(() => {
-    // console.log({ user });
   }, [user]);
 
   return (

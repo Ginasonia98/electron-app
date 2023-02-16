@@ -4,8 +4,26 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { useCallback, useState } from 'react';
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { database, storage } from '../firebase-config';
+
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    // Create file reader
+    const reader = new FileReader();
+
+    // Register event listeners
+    reader.addEventListener('loadend', (e) => resolve(e.target.result));
+    reader.addEventListener('error', reject);
+
+    // Read file
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+async function getAsByteArray(file) {
+  return new Uint8Array(await readFile(file));
+}
 
 const useFirestore = () => {
   const [percent, setPercent] = useState(0);
@@ -21,7 +39,7 @@ const useFirestore = () => {
   const downloadFile = useCallback(async (url) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'blob';
-    xhr.onload = async (event) => {
+    xhr.onload = async () => {
       const blob = await xhr.response;
       setBlobFile(blob);
       return blob;
@@ -34,44 +52,38 @@ const useFirestore = () => {
     const imageRef = doc(database, 'images', id);
     return updateDoc(imageRef, {
       images: arrayRemove(url),
-    }).then(async (response) => {
+    }).then(async () => {
       return 'deleted';
     });
   }, []);
 
-  const postFileFirebaseStorage = useCallback((file, id, type = 'images') => {
+  const postFileFirebaseStorage = useCallback(async (file, id, type = 'images') => {
     const storageRef = ref(storage, `/${type}/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    return uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const percents = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        setPercent(percents);
-      },
-      (err) => console.log(err),
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
-          setUploadedUrl((oldData) => {
-            oldData[`${type}`] = url;
-            return { ...oldData };
-          });
-          const imageRef = doc(database, 'images', id);
-          try {
-            await updateDoc(imageRef, {
-              images: arrayUnion(url),
-            });
-          } catch (err) {
-            await setDoc(doc(database, type, id), {
-              images: [url],
-            });
-          }
-          setPercent(0);
-          setUploadedUrl({});
-          return url;
+    const byteFile = await getAsByteArray(file);
+    const metadata = {
+      contentType: file.type,
+    };
+    await uploadBytes(storageRef, byteFile, metadata).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then(async (url) => {
+        setUploadedUrl((oldData) => {
+          oldData[`${type}`] = url;
+          return { ...oldData };
         });
-      },
-    );
+        const imageRef = doc(database, 'images', id);
+        try {
+          await updateDoc(imageRef, {
+            images: arrayUnion(url),
+          });
+        } catch (err) {
+          await setDoc(doc(database, type, id), {
+            images: [url],
+          });
+        }
+        setPercent(0);
+        setUploadedUrl({});
+        return url;
+      });
+    });
   }, []);
 
   return {
