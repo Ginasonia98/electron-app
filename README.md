@@ -10,4 +10,4 @@ Step
 1.Planning designs
 2.Setup tailwind and electron
 3.Create an API on firebase
-4.Using and implementing Api on websites/applications
+4.Using and implementing API on websites/applications

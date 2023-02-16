@@ -52,7 +52,6 @@ const registerWithEmailAndPassword = async (data) => {
     });
     return user;
   } catch (err) {
-    // console.error(err);
     return err;
   }
 };
@@ -62,7 +61,6 @@ const logInWithEmailAndPassword = async (email, password) => {
     const user = await signInWithEmailAndPassword(auth, email, password);
     return user;
   } catch (err) {
-    // console.error(err);
     return err;
   }
 };

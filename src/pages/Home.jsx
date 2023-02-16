@@ -9,7 +9,6 @@ import Card from 'src/components/Card/Card';
 import Card2 from 'src/components/Card/Card2';
 import HeaderSection from 'src/components/Header';
 import useFirestore from 'src/hooks/useFirestore';
-// import axios from 'axios';
 
 const fileType = ['image/svg', 'image/gif', 'image/jpeg', 'image/jpg', 'image/png'];
 
@@ -126,11 +125,13 @@ const Home = () => {
         previewImage={previewImage}
         handleUploadImage={handleUploadImage}
       />
-      <div className="container mx-auto px-1 text-2xl font-bold">Daftar Gambarmu</div>
+      <div className="container mx-auto px-1 text-2xl font-bold text-center mt-10 underline">
+        List Of Your Picture
+      </div>
       <div className="container mx-auto px-1 my-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {fileUsers.map((item, index) => {
           return (
-            <div key={`images-${index}`}>
+            <div key={`images-${index}`} className="mb-5">
               <Card2 image={item} downloadImage={downloadImage} removeImage={removeImage} />
             </div>
           );

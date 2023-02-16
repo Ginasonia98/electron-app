@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useState } from 'react';
+import Loading from 'src/components/Loading/Loading';
 import { logInWithEmailAndPassword } from 'src/hooks/firebase-config';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,6 +28,7 @@ const Login = () => {
   const submit = useCallback(async () => {
     const response = await logInWithEmailAndPassword(user.email, user.password);
     if (response?.user?.uid) {
+      <Loading />;
       navigate(`/home/${response?.user?.uid}`);
     }
   }, [user]);
@@ -38,7 +40,6 @@ const Login = () => {
           Sign In
         </h1>
         <div className="mt-6">
-          {/* <input type="file" /> */}
           <div className="mb-2">
             <label htmlFor="email" className="block text-sm font-semibold text-gray-800">
               Email
@@ -71,9 +72,6 @@ const Login = () => {
               Remember me
             </label>
           </div>
-          {/* <a href="#" className=" mt-6 text-xs font-light text-center text-gray-700 hover:underline">
-            Forget Password?
-          </a> */}
           <div className="mt-6">
             <button
               onClick={submit}
@@ -84,7 +82,7 @@ const Login = () => {
         </div>
         <p className="mt-8 text-xs font-light text-center text-gray-700">
           Already have an account?
-          <button type="button" onClick={handleGoToRegister}>
+          <button type="button" className="ml-1 underline" onClick={handleGoToRegister}>
             Register
           </button>
         </p>

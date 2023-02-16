@@ -25,12 +25,15 @@ const DownloadCard = ({ image, downloadImage, removeImage }) => {
         <div
           onClick={() => downloadImage(image)}
           className="w-full text-white py-2 cursor-pointer text-center bg-green-400 hover:bg-green-600">
-          Download
+          Download File
         </div>
         <div
-          onClick={() => removeImage(image)}
+          onClick={() => {
+            // eslint-disable-next-line no-alert
+            if (window.confirm('Do you want to delete this file?')) removeImage(image);
+          }}
           className="w-full text-white py-2 cursor-pointer text-center bg-red-400 hover:bg-red-600">
-          Delete
+          Delete File
         </div>
       </div>
     </div>

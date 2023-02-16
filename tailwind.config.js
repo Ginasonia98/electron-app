@@ -17,7 +17,11 @@ module.exports = {
       '3xl': '1600px', // laptop
     },
     extend: {
-      'white': '#fff',
+      white: '#fff',
+      animation: {
+        bounce200: 'bounce 1s infinite 200ms',
+        bounce400: 'bounce 1s infinite 400ms',
+      },
     },
   },
   plugins: [],
