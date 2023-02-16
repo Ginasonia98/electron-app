@@ -11,3 +11,6 @@ Step
 2.Setup tailwind and electron
 3.Create an API on firebase
 4.Using and implementing API on websites/applications
+
+
+This website has been built into an application
